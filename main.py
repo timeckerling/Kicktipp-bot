@@ -11,6 +11,7 @@ from pathlib import Path
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
+TEST_CHANNEL_ID = int(os.getenv('TEST_CHANNEL_ID'))  # For debugging
 KICKTIPP_URL = os.getenv('KICKTIPP_URL')
 KICKTIPP_ROLE_ID = int(os.getenv('KICKTIPP_ROLE_ID'))
 
@@ -58,6 +59,17 @@ def get_upcoming_matches():
     return matches
 
 
+# Test message (Comment out if not needed)
+async def send_test_message():
+    await client.wait_until_ready()
+    if test_channel := client.get_channel(TEST_CHANNEL_ID):
+        test_message = f'Tjääääna! FalconBot här för att skicka ett testmeddelande, och påminna er om hur jävla fula djurgården är. \n \n Hare!'
+        await test_channel.send(test_message)
+        print(f"Sent test message to channel {TEST_CHANNEL_ID}")
+    else:
+        print(f"Error: Could not find test channel with ID {TEST_CHANNEL_ID}")
+
+
 # Reminder message
 async def send_reminder(match):
     await client.wait_until_ready()
@@ -79,8 +91,10 @@ async def send_daily_reminders():
     if matches := get_upcoming_matches():
         for match in matches:
             await send_reminder(match)
+            await send_test_message()
     else:
         print("No matches today.")
+        await send_test_message()
 
 
 def get_next_match_date():
